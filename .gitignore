@@ -1,0 +1,5 @@
+.idea
+.venv
+draft/
+.env
+.streamlit/config.toml
