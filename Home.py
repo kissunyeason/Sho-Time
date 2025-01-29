@@ -5,7 +5,7 @@ from module import google_api_authenticator
 import os
 import extra_streamlit_components as stx
 import uuid
-from time import sleep
+from time import sleep, time
 import glob
 
 st.set_page_config(page_title='Sho-Time', initial_sidebar_state='collapsed',
@@ -235,4 +235,35 @@ if st.button('Reset', type='primary', help='reset session', icon='🔄'):
     cookie_success_msg.success('All cookies have been successfully cleared!')
     sleep(1.5)
     cookie_success_msg.empty()
-    st.info('A manual refresh is recommended after a session reset.')
+    st.info('A manual refresh is recommended after a session reset')
+
+
+def clear_old_files(directory, age_limit=86400):
+    '''clear <dist> directory periodically to prevent clogging'''
+    now = time()
+    file_patterns = ["*.txt", "*.json"]  # Targeted file types
+
+    for pattern in file_patterns:
+        for file_path in glob.glob(os.path.join(directory, pattern)):
+            if os.path.isfile(file_path) and (now - os.path.getmtime(file_path)) > age_limit:
+                os.remove(file_path)
+                print(f"Deleted: {file_path}")
+
+
+def get_last_cleanup():
+    if os.path.exists("last_cleanup.txt"):
+        with open("last_cleanup.txt", "r") as f:
+            return float(f.read().strip())
+    return 0  # Default to 0 if the file doesn't exist yet
+
+
+def set_last_cleanup(timestamp):
+    with open("last_cleanup.txt", "w") as f:
+        f.write(str(timestamp))
+
+
+# Run cleanup only once every 12 hours
+last_cleanup = get_last_cleanup()
+if time() - last_cleanup > 43200:  # 12 hours
+    clear_old_files("dist")
+    set_last_cleanup(time())
