@@ -23,7 +23,7 @@ if query_params:
     # st.json(query_params.items())
     # st.json(st.session_state, expanded=False)  # check if state stays the same across pages and across tabs
     if 'code' in query_params and 'session_id' in st.session_state and 'authorising_Oauth' in st.session_state:
-        st.write('writing flow code .txt')
+        print('writing flow code .txt')
         if st.session_state.authorising_Oauth:
             with open(f'dist/{st.session_state.session_id}-flow code.txt', 'w') as f:
                 json.dump(query_params.to_dict(), f)
@@ -32,8 +32,8 @@ if query_params:
 @st.dialog("✅Flow code retrieved from callback URL")
 def instruction_modal():
     st.write(
-        'Please return to the tab/window where you left off before being redirected to Google Cloud Console for app authorisation.')
-    st.markdown('Navigating to :green[Home] page from within this tab would not work.')
+        'Please return to the tab/window where you left off before being redirected to the Google Cloud Console for app authorisation.')
+    st.markdown('Navigating to :green[Home] page from within this tab will not work.')
 
 
 if 'code' in query_params and 'authorising_Oauth' in st.session_state and 'session_id' in st.session_state:

@@ -226,7 +226,10 @@ if st.button('Reset', type='primary', help='reset session', icon='🔄'):
         for cookie in cookies.copy():
             delete_cookie_js(cookie)
         for item in st.session_state.keys():
-            del item
+            try:
+                del item
+            except:
+                print(f'Error deleting the {item} cookie')
         for file in glob.glob(f'dist/{st.session_state.session_id}*'):
             os.remove(file)
         sleep(1.5)
