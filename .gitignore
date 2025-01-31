@@ -1,6 +1,5 @@
 .idea
 .venv
 draft/
-.env
-.streamlit/config.toml
+.streamlit/secrets.toml
 last_cleanup.txt

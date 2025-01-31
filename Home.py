@@ -87,7 +87,7 @@ gphoto.radio(
         ':orange-background[Full]'
     ],
     captions=[
-        'Skip authorising Google Photos scope',
+        'Do not grant access to Google Photos',
         'Grant read only access to Google Photos',
         'Grant full permission(read, add, edit and delete) access to Google Photos'
     ],
@@ -108,7 +108,7 @@ gdrive.radio(
         ':orange-background[Full]'
     ],
     captions=[
-        'Skip authorising Google Drive scope',
+        'Do not grant access to Google Drive',
         'Grant read only access to Google Drive',
         'Grant full permission(read, add, edit and delete) access to Google Drive'
     ],
