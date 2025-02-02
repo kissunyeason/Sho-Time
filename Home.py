@@ -72,7 +72,7 @@ if 'credential_data' not in st.session_state:
 if 'authorising_OAuth' not in st.session_state:
     st.session_state.authorising_Oauth = False
 
-st.title('A simple Google Drive and Photos Authenticator')
+st.title('A simple OAuth2 token generator for accessing Google services')
 st.header('1) Pick your scope(s)')
 row = st.columns(2)
 
@@ -89,7 +89,7 @@ gphoto.radio(
     captions=[
         'Do not grant access to Google Photos',
         'Grant read only access to Google Photos',
-        'Grant full permission(read, add, edit and delete) access to Google Photos'
+        'Grant full access(read, upload, and organize) to Google Photos'
     ],
     index=default_gphoto,
     key='gphoto',
@@ -110,10 +110,33 @@ gdrive.radio(
     captions=[
         'Do not grant access to Google Drive',
         'Grant read only access to Google Drive',
-        'Grant full permission(read, add, edit and delete) access to Google Drive'
+        'Grant full access(read, edit, create and delete) to Google Drive'
     ],
     index=default_gdrive,
     key='gdrive',
+    help='select the scope you want authorised',
+    horizontal=True
+)
+
+row2 = st.columns(2)
+
+youtube = row2[0].container()
+youtube.subheader(':rainbow[Youtube]')
+default_youtube = RADIO_CHOICE_MAP[cookies['youtube_radio_choice']] if 'youtube_radio_choice' in cookies else 0
+youtube.radio(
+    '***Pick either one(select None to skip)***',
+    [
+        'None',
+        ':orange-background[Readonly]',
+        ':orange-background[Full]'
+    ],
+    captions=[
+        'Do not grant access to Youtube',
+        'Grant read only access to Youtube',
+        'Grant full access(manage your YouTube account) to Youtube'
+    ],
+    index=default_youtube,
+    key='youtube',
     help='select the scope you want authorised',
     horizontal=True
 )
@@ -124,29 +147,41 @@ credential_file = st.file_uploader('Upload your Google credentials file(.json) h
 if credential_file:
     st.session_state.credential_data = StringIO(credential_file.getvalue().decode('UTF-8')).read()
 
-if (st.session_state.gphoto != 'None' or st.session_state['gdrive'] != 'None') and st.session_state.credential_data:
+if (st.session_state.gphoto != 'None' or st.session_state[
+    'gdrive'] != 'None' or st.session_state.youtube != 'None') and st.session_state.credential_data:
     st.session_state.invalid_selection = False
 else:
     st.session_state.invalid_selection = True
 
+scope_map = {
+    'gphoto': {
+        ':orange-background[Readonly]': 'https://www.googleapis.com/auth/photoslibrary.readonly',
+        ':orange-background[Full]': 'https://www.googleapis.com/auth/photoslibrary'
+    },
+    'gdrive': {
+        ':orange-background[Readonly]': 'https://www.googleapis.com/auth/drive.readonly',
+        ':orange-background[Full]': 'https://www.googleapis.com/auth/drive'
+    },
+    'youtube': {
+        ':orange-background[Readonly]': 'https://www.googleapis.com/auth/youtube.readonly',
+        ':orange-background[Full]': 'https://www.googleapis.com/auth/youtube'
+    }
+}
 scopes = []
-
-if 'Readonly' in st.session_state.gphoto:
-    scopes.append('https://www.googleapis.com/auth/photoslibrary.readonly')
-elif 'Full' in st.session_state.gphoto:
-    scopes.append('https://www.googleapis.com/auth/photoslibrary')
-
-if 'Readonly' in st.session_state.gdrive:
-    scopes.append('https://www.googleapis.com/auth/drive.readonly')
-elif 'Full' in st.session_state.gdrive:
-    scopes.append('https://www.googleapis.com/auth/drive')
+if st.session_state.gphoto != 'None':
+    scopes.append(scope_map['gphoto'][st.session_state.gphoto])
+if st.session_state.gdrive != 'None':
+    scopes.append(scope_map['gdrive'][st.session_state.gdrive])
+if st.session_state.youtube != 'None':
+    scopes.append(scope_map['youtube'][st.session_state.youtube])
 
 # st.json(st.session_state, expanded=False)
 
 cookies_to_set = dict(
     credential_data=st.session_state.credential_data,
     gphoto_radio_choice=st.session_state.gphoto,
-    gdrive_radio_choice=st.session_state.gdrive
+    gdrive_radio_choice=st.session_state.gdrive,
+    youtube_radio_choice=st.session_state.youtube
 )
 
 
@@ -154,6 +189,7 @@ def save_to_cookies():
     set_cookie_js(cookie='credential_data', val=st.session_state.credential_data)
     set_cookie_js(cookie='gphoto_radio_choice', val=st.session_state.gphoto)
     set_cookie_js(cookie='gdrive_radio_choice', val=st.session_state.gdrive)
+    set_cookie_js(cookie='youtube_radio_choice', val=st.session_state.youtube)
     print('Cookies successfully saved')
 
 

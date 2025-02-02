@@ -3,7 +3,7 @@
 # About
 
 A simple self-hosted web app for authorising selected Google API Oauth2 scopes via self-defined API credentials. Supports
-Google Drive and Google Photos.
+Google Drive, Google Photos and Youtube.
 
 # Use Case Scenario
 
