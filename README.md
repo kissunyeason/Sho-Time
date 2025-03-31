@@ -17,8 +17,10 @@ two, the public token generator will definitely have access to the finalized tok
 scopes you've granted previously. What he does with it is up to anyone's guess.
 
 Thus, I decided to take it upon my shoulders to provide a GUI option for users who wish to grant third party access to
-specific Google services but opt for custom API client instead. With that being said, please refrain from using the demo
-app I've deployed to generate access token. Please deploy **your own** copy instead.
+specific Google services but opt for custom API client instead. 
+> [!IMPORTANT]
+> Please refrain from using the demo
+app I've deployed to generate access token, please deploy **your own** copy instead.
 
 # Features
 
